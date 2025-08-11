@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package transaction;
+
+service TransactionService {
+  rpc CreateTransaction (CreateTransactionRequest) returns (BaseResponse);
+  rpc GetTransaction (GetTransactionRequest) returns (BaseResponse);
+}
+
+message CreateTransactionRequest {
+    string accountExternalIdDebit = 1;
+    string accountExternalIdCredit = 2;
+    int32 transactionTypeId = 3;
+    float value = 4;
+}
+
+message CreateTransactionResponse {
+  string id = 1;
+  string accountExternalIdDebit = 2;
+  string accountExternalIdCredit = 3;
+  int32 transactionTypeId = 4;
+  string status = 5;
+}
+
+
+message GetTransactionRequest {
+  string transactionExternalId = 1;
+}
+
+message TransactionStatus{
+  string name = 1;
+}
+
+message TransactionType{
+  string name = 1;
+}
+
+message GetTransactionResponse {
+  string transactionExternalId = 1;
+  TransactionType transactionType = 2;
+  TransactionStatus transactionStatus = 3;
+  string value = 4; // decimal
+}
+
+
+message Error {
+  string message = 1;
+}
+
+message BaseResponse {
+  oneof result {
+    Error error = 1;
+    CreateTransactionResponse createTransactionResponse = 2;
+    GetTransactionResponse getTransactionRequest = 3;
+  }
+}
