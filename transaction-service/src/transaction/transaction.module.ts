@@ -9,15 +9,25 @@ import { PrismaTransactionRepo } from './infrastructure/repositories/prisma-tran
 import { TRANSACTION_REPO } from './domain/transaction.repo';
 import { CreateTransactionUseCase } from './application/create-transaction/create-transaction.usecase';
 import { GetTransactionUseCase } from './application/get-transaction/get-transaction.usecase';
+import { EventBusModule } from 'src/event-bus/event-bus.module';
+import { UpdateTransactionHandler } from 'src/transaction/application/update-transaction/update-transaction.handler';
+import { UpdateTransactionUseCase } from './application/update-transaction/update-transaction.usecase';
 
 export const QueryHandlers = [GetTransactionHandler];
 
-export const CommandHandlers = [CreateTransactionHandler];
+export const CommandHandlers = [
+  CreateTransactionHandler,
+  UpdateTransactionHandler,
+];
 
-export const UseCases = [CreateTransactionUseCase, GetTransactionUseCase];
+export const UseCases = [
+  UpdateTransactionUseCase,
+  CreateTransactionUseCase,
+  GetTransactionUseCase,
+];
 
 @Module({
-  imports: [PrismaModule, CqrsModule, ConfigModule],
+  imports: [PrismaModule, CqrsModule, ConfigModule, EventBusModule],
   controllers: [TransactionController],
   providers: [
     ...CommandHandlers,

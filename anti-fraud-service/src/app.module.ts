@@ -1,16 +1,15 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { TransactionModule } from './transaction/transaction.module';
-import { EventBusModule } from './event-bus/event-bus.module';
+import { ConfigModule } from '@nestjs/config';
+import { AntiFraudModule } from './anti-fraud/anti-fraud.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    TransactionModule,
-    EventBusModule,
+    AntiFraudModule,
   ],
   controllers: [AppController],
   providers: [AppService],

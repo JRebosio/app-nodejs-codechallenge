@@ -3,7 +3,6 @@ import {
   ITransactionRepo,
   TRANSACTION_REPO,
   TransactionId,
-  Transaction,
 } from 'src/transaction/domain/transaction.repo';
 
 const TRANSACTION_TYPE_MAP: Record<number, string> = {

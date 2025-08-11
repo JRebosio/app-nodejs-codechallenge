@@ -16,8 +16,8 @@ export class CreateTransactionUseCase {
 
   async execute(transaction: Transaction): Promise<Transaction> {
     try {
-      await this.transactionRepo.create(transaction);
-      return transaction;
+      const new_transaction = await this.transactionRepo.create(transaction);
+      return new_transaction;
     } catch (err) {
       this.logger.error('CREATE TRANSACTION ERROR');
       throw err;

@@ -4,6 +4,7 @@ import {
   ITransactionRepo,
   Transaction,
   TransactionId,
+  UpdateTransaction,
 } from '../../domain/transaction.repo';
 
 @Injectable()
@@ -13,7 +14,7 @@ export class PrismaTransactionRepo implements ITransactionRepo {
 
   async create(transaction: Transaction): Promise<Transaction> {
     try {
-      await this.prismaService.transaction.create({
+      const new_transaction = await this.prismaService.transaction.create({
         data: {
           accountExternalIdDebit: transaction.accountExternalIdDebit,
           accountExternalIdCredit: transaction.accountExternalIdCredit,
@@ -21,12 +22,11 @@ export class PrismaTransactionRepo implements ITransactionRepo {
           value: transaction.value,
         },
       });
+      return new_transaction;
     } catch (err) {
       this.logger.error(err);
       throw err;
     }
-
-    return transaction;
   }
 
   async getByTransactionId(
@@ -34,6 +34,21 @@ export class PrismaTransactionRepo implements ITransactionRepo {
   ): Promise<Transaction | null> {
     const transaction = await this.prismaService.transaction.findFirst({
       where: { id: transactionId.transactionExternalId },
+    });
+
+    if (!transaction) {
+      return null;
+    }
+
+    return transaction;
+  }
+
+  async updateStatus(
+    updateTransaction: UpdateTransaction,
+  ): Promise<Transaction | null> {
+    const transaction = await this.prismaService.transaction.update({
+      where: { id: updateTransaction.transactionId },
+      data: { status: updateTransaction.transactionStatus },
     });
 
     if (!transaction) {
