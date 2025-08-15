@@ -4,8 +4,8 @@
 Built a microservice system to handle high-volume financial transactions with fraud detection capabilities.
 
 ## Architecture
-Two specialized services:
-- **Transaction Service**: Manages transaction lifecycle via gRPC
+Two specialized services with Redis caching layer:
+- **Transaction Service**: Manages transaction lifecycle via gRPC with Redis caching
 - **Anti-Fraud Service**: Asynchronous fraud validation using Kafka events
 
 ## Technology Choices
@@ -27,6 +27,7 @@ Two specialized services:
 - **Communication**: gRPC
 - **Messaging**: Apache Kafka
 - **Database**: PostgreSQL + Prisma ORM
+- **Caching**: Redis for high-performance data access
 - **Pattern**: CQRS for read/write separation
 
 ## Quick Start
@@ -39,6 +40,7 @@ docker-compose up -d
 -   Transaction service
 ```bash
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/postgres?schema=public
+REDIS_HOST = 127.0.0.1:6379
 ```
 
 
@@ -63,9 +65,10 @@ npx prisma generate
 - **Horizontal scaling**: Multiple service instances
 - **Kafka partitioning**: Parallel message processing
 - **gRPC load balancing**: Efficient request distribution
+- **Redis caching**: Sub-millisecond response times for frequent queries
 
 ## Future Enhancements
-- Redis caching for performance
+- Advanced Redis clustering for higher availability
 - Comprehensive testing suite
 - Monitoring and alerting
 - Database sharding for extreme volumes

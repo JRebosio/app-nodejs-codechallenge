@@ -6,11 +6,14 @@ import {
   TransactionId,
   UpdateTransaction,
 } from '../../domain/transaction.repo';
-
+import { RedisService } from '../providers/redis.service';
 @Injectable()
 export class PrismaTransactionRepo implements ITransactionRepo {
   private readonly logger = new Logger(PrismaTransactionRepo.name);
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly redisService: RedisService,
+    private readonly prismaService: PrismaService,
+  ) {}
 
   async create(transaction: Transaction): Promise<Transaction> {
     try {
@@ -32,6 +35,13 @@ export class PrismaTransactionRepo implements ITransactionRepo {
   async getByTransactionId(
     transactionId: TransactionId,
   ): Promise<Transaction | null> {
+    const cacheKey = `user:${transactionId.transactionExternalId}`;
+    const cachedUser = await this.redisService.getKey<Transaction>(cacheKey);
+
+    if (cachedUser) {
+      return cachedUser;
+    }
+
     const transaction = await this.prismaService.transaction.findFirst({
       where: { id: transactionId.transactionExternalId },
     });
@@ -39,6 +49,8 @@ export class PrismaTransactionRepo implements ITransactionRepo {
     if (!transaction) {
       return null;
     }
+
+    await this.redisService.setKey<Transaction>(cacheKey, transaction, 3600);
 
     return transaction;
   }
@@ -54,6 +66,10 @@ export class PrismaTransactionRepo implements ITransactionRepo {
     if (!transaction) {
       return null;
     }
+
+    const cacheKey = `user:${updateTransaction.transactionId}`;
+
+    await this.redisService.deleteKey(cacheKey);
 
     return transaction;
   }

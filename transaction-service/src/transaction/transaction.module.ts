@@ -12,7 +12,7 @@ import { GetTransactionUseCase } from './application/get-transaction/get-transac
 import { EventBusModule } from 'src/event-bus/event-bus.module';
 import { UpdateTransactionHandler } from 'src/transaction/application/update-transaction/update-transaction.handler';
 import { UpdateTransactionUseCase } from './application/update-transaction/update-transaction.usecase';
-
+import { RedisService } from './infrastructure/providers/redis.service';
 export const QueryHandlers = [GetTransactionHandler];
 
 export const CommandHandlers = [
@@ -33,6 +33,7 @@ export const UseCases = [
     ...CommandHandlers,
     ...UseCases,
     ...QueryHandlers,
+    RedisService,
     {
       useClass: PrismaTransactionRepo,
       provide: TRANSACTION_REPO,
